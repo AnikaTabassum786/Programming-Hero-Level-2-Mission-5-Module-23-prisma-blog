@@ -23,9 +23,14 @@ model Post{
 
   tags String[]
   views Int @default(0)
-  authorId String
+  authorId String   // it will manage by better auth
   createdAt  DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  comments Comment[]
+
+  @@index([authorId])
+  @@map("posts") // database it will saved as posts
 
 }
 
@@ -33,13 +38,20 @@ model Comment{
   id String @id @default(uuid())
 
   content String @db.Text
-  authorId String
+  authorId String  // it will manage by better auth
   postId String
+  post Post @relation(fields: [postId],references: [id])
   parentId String?
+  parent Comment? @relation("CommentReplies",fields: [parentId], references: [id])
+  replies Comment[] @relation("CommentReplies")
   status CommentStatus @default(APPROVED)
 
   createdAt  DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([postId])
+  @@index([authorId])
+  @@map("comments") // database it will saved as comments
 }
 
 enum PostStatus{
