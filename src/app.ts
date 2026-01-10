@@ -3,6 +3,7 @@ import express, { Application } from 'express'
 import { toNodeHandler } from "better-auth/node";
 import { auth } from './lib/auth';
 import cors from 'cors'
+import { postRouter } from './modules/post/post.router';
 
 // import { auth } from './lib/auth';
 
@@ -18,7 +19,7 @@ app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use(express.json());
 
-// app.use('/posts', postRouter)
+app.use('/posts', postRouter)
 
 app.get('/', (req,res)=>{
     res.send("Hello world")
