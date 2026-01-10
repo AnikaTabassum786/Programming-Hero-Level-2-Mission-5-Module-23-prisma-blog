@@ -1,8 +1,8 @@
-import express,{Router} from 'express'
-import { postController } from './post.controller';
+// import express,{Router} from 'express'
+// import { postController } from './post.controller';
 
-const router = express.Router();
+// const router = express.Router();
 
-router.post("/", postController.createPost)
+// router.post("/", postController.createPost)
 
-export const postRouter:Router = router
+// export const postRouter:Router = router
