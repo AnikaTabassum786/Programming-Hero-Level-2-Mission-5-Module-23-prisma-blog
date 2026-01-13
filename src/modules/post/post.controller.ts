@@ -16,7 +16,7 @@ const createPost = async (req:Request, res:Response) =>{
 
   
 
-    console.log(req.user)
+    // console.log(req.user)
     const result = await postService.createPost(req.body, user.id as string)
     res.status(201).json(result)
   }
@@ -30,8 +30,12 @@ const createPost = async (req:Request, res:Response) =>{
 
 const getAllPost= async(req:Request, res:Response)=>{
   try{
-      const result = await postService.getAllPost()
-      res.status(200).json(result)
+    const {search} =req.query
+    const searchString = typeof search === 'string'?search:undefined
+
+    // console.log("search value",search)
+    const result = await postService.getAllPost({search:searchString})
+    res.status(200).json(result)
   }
   catch(error){
     res.status(400).json({
