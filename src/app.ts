@@ -10,7 +10,7 @@ import { postRouter } from './modules/post/post.router';
 const app:Application = express();
 
 app.use(cors({
-origin:process.env.APP_URL || "http://localhost:3000",
+origin:process.env.APP_URL || "http://localhost:4000",
 credentials: true
 }))
 
