@@ -18,6 +18,8 @@ const getAllPost = async (payload: {
     isFeatured: boolean | undefined
     status:  PostStatus| undefined
     authorId: string | undefined
+    page:number,
+    limit:number
     
 
 }) => {
