@@ -17,17 +17,17 @@ const getAllPost = async (payload: {
     search: string | undefined,
     tags: string[] | [],
     isFeatured: boolean | undefined
-    status:  PostStatus| undefined
+    status: PostStatus | undefined
     authorId: string | undefined
-    page:number,
-    limit:number
-    skip:number,
-    sortBy:string,
-    sortOrder:string
-    
+    page: number,
+    limit: number
+    skip: number,
+    sortBy: string,
+    sortOrder: string
+
 
 }) => {
-    const andCondition:PostWhereInput[] = []
+    const andCondition: PostWhereInput[] = []
 
     if (payload.search) {
         andCondition.push(
@@ -66,32 +66,32 @@ const getAllPost = async (payload: {
         )
     }
 
-    if(typeof(payload.isFeatured) === 'boolean' ){
+    if (typeof (payload.isFeatured) === 'boolean') {
         andCondition.push({
-            isFeatured:payload.isFeatured
+            isFeatured: payload.isFeatured
         })
     }
 
-    if(payload.status){
-       andCondition.push({
-        status:payload.status
-       })
+    if (payload.status) {
+        andCondition.push({
+            status: payload.status
+        })
     }
 
-    if(payload.authorId){
-      andCondition.push({
-        authorId:payload.authorId
-      })
+    if (payload.authorId) {
+        andCondition.push({
+            authorId: payload.authorId
+        })
     }
 
     const allPosts = await prisma.post.findMany({
-        take:payload.limit,
-        skip:payload.skip,
+        take: payload.limit,
+        skip: payload.skip,
         where: {
             AND: andCondition
         },
         orderBy: {
-            [payload.sortBy]:payload.sortOrder
+            [payload.sortBy]: payload.sortOrder
         }
     })
 
@@ -101,28 +101,42 @@ const getAllPost = async (payload: {
         }
     })
 
-    return{
-        data:allPosts,
-        pagination:{
-           total ,
-           page:payload.page,
-           limit:payload.limit,
-           totalPage: Math.ceil(total/payload.limit)
-           
+    return {
+        data: allPosts,
+        pagination: {
+            total,
+            page: payload.page,
+            limit: payload.limit,
+            totalPage: Math.ceil(total / payload.limit)
+
         }
     }
 
-    
-    
+
+
 }
 
-const getPostById = async(postId:string)=>{
+const getPostById = async (postId: string) => {
     // console.log("get post by ID",postId)
 
-    const result = await prisma.post.findUnique({
-        where:{
-            id:postId
-        }
+    const result = await prisma.$transaction(async (tx) => {
+        await tx.post.update({
+            where: {
+                id: postId
+            },
+            data: {
+                views: {
+                    increment: 1
+                }
+            }
+        })
+
+        const postData = await tx.post.findUnique({
+            where: {
+                id: postId
+            }
+        })
+        return postData
     })
 
     return result
