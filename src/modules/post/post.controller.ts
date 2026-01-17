@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { postService } from "./post.service"
 import { PostStatus } from "../../../generated/prisma/enums";
 import paginationSortingHelper from "../../helpers/Pagination&SortingHelpers";
+import { prisma } from "../../lib/prisma";
 
 
 
@@ -69,7 +70,25 @@ const getAllPost = async (req: Request, res: Response) => {
   }
 }
 
+const getPostById= async(req:Request,res:Response)=>{
+  try{
+    const {postId} = req.params
+    if(!postId){
+      throw new Error ("Post ID is required")
+    }
+    const result = await postService.getPostById(postId)
+    res.status(201).json(result)
+  }
+  catch (error) {
+    res.status(400).json({
+      error: "Post creation failed",
+      details: error
+    })
+  }
+}
+
 export const postController = {
   createPost,
-  getAllPost
+  getAllPost,
+  getPostById
 }
