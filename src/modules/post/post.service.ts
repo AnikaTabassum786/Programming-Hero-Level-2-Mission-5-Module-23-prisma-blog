@@ -1,4 +1,5 @@
 import { Post, PostStatus } from "../../../generated/prisma/client";
+
 import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
 
@@ -20,6 +21,9 @@ const getAllPost = async (payload: {
     authorId: string | undefined
     page:number,
     limit:number
+    skip:number,
+    sortBy:string,
+    sortOrder:string
     
 
 }) => {
@@ -81,8 +85,13 @@ const getAllPost = async (payload: {
     }
 
     const allPosts = await prisma.post.findMany({
+        take:payload.limit,
+        skip:payload.skip,
         where: {
             AND: andCondition
+        },
+        orderBy: {
+            [payload.sortBy]:payload.sortOrder
         }
     })
 
