@@ -9,6 +9,7 @@ router.post('/',auth(UserRole.ADMIN,UserRole.USER),commentController.createComme
 router.get('/:commentId',commentController.getCommentById)
 router.get('/author/:authorId',commentController.getCommentByAuthorId)
 router.delete('/:commentId',auth(UserRole.ADMIN,UserRole.USER),commentController.deleteComment)
+router.patch('/:commentId',auth(UserRole.ADMIN,UserRole.USER),commentController.updateComment)
 
 
 export const commentRouter:Router = router

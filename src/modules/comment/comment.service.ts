@@ -1,58 +1,59 @@
 import { error } from "node:console"
 import { prisma } from "../../lib/prisma"
+import { CommentStatus } from "../../../generated/prisma/enums"
 
 
-const createComment=async(payload:
+const createComment = async (payload:
     {
-        content:string,
-        authorId:string,
-        postId:string,
-        parentId?:string
+        content: string,
+        authorId: string,
+        postId: string,
+        parentId?: string
     }
 
-)=>{
+) => {
     // console.log("Create Comment Service!!",payload)
 
     const postData = await prisma.post.findUniqueOrThrow({
-        where:{
-            id:payload.postId
+        where: {
+            id: payload.postId
         }
     })
 
-    if(payload.parentId){
+    if (payload.parentId) {
         const parentData = await prisma.comment.findUniqueOrThrow({
-            where:{
-                id:payload.parentId
+            where: {
+                id: payload.parentId
             }
         })
     }
 
     const result = await prisma.comment.create({
-        data:payload
+        data: payload
     })
 
     return result
 }
 
-const getCommentById=async(commentId:string)=>{
+const getCommentById = async (commentId: string) => {
     // console.log("Get comment by id",commentId)
 
     const result = await prisma.comment.findUnique({
-        where:{
-            id:commentId
+        where: {
+            id: commentId
         },
         // include:{
         //     post:true
         // }
-        include:{
-            post:{
-              select:{
-                id:true,
-                title:true,
-                tags:true,
-                views:true
+        include: {
+            post: {
+                select: {
+                    id: true,
+                    title: true,
+                    tags: true,
+                    views: true
 
-              }  
+                }
             }
         }
     })
@@ -60,57 +61,89 @@ const getCommentById=async(commentId:string)=>{
     return result
 }
 
-const getCommentByAuthorId=async(authorId:string)=>{
+const getCommentByAuthorId = async (authorId: string) => {
 
-  const result = await prisma.comment.findMany({
-    where:{
-        authorId
-    },
-    include:{
-        post:{
-            select:{
-                id:true,
-                title:true
+    const result = await prisma.comment.findMany({
+        where: {
+            authorId
+        },
+        include: {
+            post: {
+                select: {
+                    id: true,
+                    title: true
+                }
             }
         }
-    }
-  })
-  return result
+    })
+    return result
 }
 
 //1.nijer comment delete korte parbe
 //2.login thakte hobe
 //3.login user ar nijer comment kina ata check kortr hobe
 
-const deleteComment= async(commentId:string, authorId:string)=>{
+const deleteComment = async (commentId: string, authorId: string) => {
     // console.log("Delete Comment",commentId,authorId)
 
     const commentData = await prisma.comment.findFirst({
-        where:{
-            id:commentId,
+        where: {
+            id: commentId,
             authorId
         },
-        select:{
-            id:true
+        select: {
+            id: true
         }
     })
     // console.log(commentData)
-    if(!commentData){
-        throw new Error ('Your provided input is invalid')
+    if (!commentData) {
+        throw new Error('Your provided input is invalid')
     }
 
     const result = await prisma.comment.delete({
-        where:{
-            id:commentId
+        where: {
+            id: commentId
         }
     })
     return result
 }
 
+//authorId- jar comment sai update korte parbe,
+//commentId- kon comment update korbe
+//update data- ki update korbe
+
+const updateComment = async (authorId: string, commentId: string, data: { content?: string, status?: CommentStatus }) => {
+    // console.log(authorId, commentId, data)
+    const commentData = await prisma.comment.findFirst({
+        where: {
+            id: commentId,
+            authorId
+        },
+        select: {
+            id: true
+        }
+    })
+    // console.log(commentData)
+    if (!commentData) {
+        throw new Error('Your provided input is invalid')
+    }
+
+    const result = await prisma.comment.update({
+        where: {
+            id: commentId
+        },
+        data
+    })
+  
+    return result
+}
+
+
 export const commentService = {
     createComment,
     getCommentById,
     getCommentByAuthorId,
-    deleteComment
+    deleteComment,
+    updateComment
 }
 
