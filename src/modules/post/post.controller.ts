@@ -55,11 +55,11 @@ const getAllPost = async (req: Request, res: Response) => {
     // const sortBy = req.query.sortBy as string;
     // const sortOrder = req.query.sortOrder as string;
 
-    const {page, limit, skip,sortBy,sortOrder} = paginationSortingHelper(req.query)
+    const { page, limit, skip, sortBy, sortOrder } = paginationSortingHelper(req.query)
     // console.log("Options:",options)
 
     // console.log({isFeatured})
-    const result = await postService.getAllPost({ search: searchString, tags, isFeatured, status, authorId, page, limit, skip,sortBy,sortOrder })
+    const result = await postService.getAllPost({ search: searchString, tags, isFeatured, status, authorId, page, limit, skip, sortBy, sortOrder })
     res.status(200).json(result)
   }
   catch (error) {
@@ -70,11 +70,11 @@ const getAllPost = async (req: Request, res: Response) => {
   }
 }
 
-const getPostById= async(req:Request,res:Response)=>{
-  try{
-    const {postId} = req.params
-    if(!postId){
-      throw new Error ("Post ID is required")
+const getPostById = async (req: Request, res: Response) => {
+  try {
+    const { postId } = req.params
+    if (!postId) {
+      throw new Error("Post ID is required")
     }
     const result = await postService.getPostById(postId)
     res.status(201).json(result)
@@ -87,8 +87,24 @@ const getPostById= async(req:Request,res:Response)=>{
   }
 }
 
+const getMyPost = async (req: Request, res: Response) => {
+  try {
+    const user = req.user
+    console.log(user)
+    const result = await postService.getMyPost(user?.id as string)
+    res.status(201).json(result)
+  }
+  catch (error) {
+    res.status(400).json({
+      error: "Post fetched failed",
+      details: error
+    })
+  }
+}
+
 export const postController = {
   createPost,
   getAllPost,
-  getPostById
+  getPostById,
+  getMyPost
 }
