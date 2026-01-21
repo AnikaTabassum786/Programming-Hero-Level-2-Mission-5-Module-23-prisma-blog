@@ -103,28 +103,50 @@ const getMyPost = async (req: Request, res: Response) => {
   }
 }
 
-const updatePost=async(req:Request,res:Response)=>{
-  try{
-    const user =req.user
-  const {postId} = req.params
+const updatePost = async (req: Request, res: Response) => {
+  try {
+    const user = req.user
+    const { postId } = req.params
 
-  if(!user){
-    throw new Error("You are unauthorized")
-  }
+    if (!user) {
+      throw new Error("You are unauthorized")
+    }
 
-  const isAdmin = user.role === UserRole.ADMIN
- 
-  console.log(user)
-  const result = await postService.updatePost(postId as string,req.body, user.id, isAdmin)
-  res.status(201).json(result)
+    const isAdmin = user.role === UserRole.ADMIN
+
+    console.log(user)
+    const result = await postService.updatePost(postId as string, req.body, user.id, isAdmin)
+    res.status(201).json(result)
   }
   catch (error) {
-        const errorMessage = (error instanceof Error)? error.message : "Post Updated failed"
-        res.status(400).json({
-            error: errorMessage,
-            details: error
-        })
+    const errorMessage = (error instanceof Error) ? error.message : "Post Updated failed"
+    res.status(400).json({
+      error: errorMessage,
+      details: error
+    })
+  }
+}
+
+const deletePost = async (req: Request, res: Response) => {
+  try {
+    const user = req.user
+    const { postId } = req.params
+
+    if (!user) {
+      throw new Error("You are unauthorized")
     }
+
+    const isAdmin = user.role === UserRole.ADMIN
+    const result = await postService.deletePost(postId as string, user.id, isAdmin)
+    res.status(201).json(result)
+  }
+  catch (error) {
+    const errorMessage = (error instanceof Error) ? error.message : "Post Updated failed"
+    res.status(400).json({
+      error: errorMessage,
+      details: error
+    })
+  }
 }
 
 export const postController = {
@@ -132,5 +154,6 @@ export const postController = {
   getAllPost,
   getPostById,
   getMyPost,
-  updatePost
+  updatePost,
+  deletePost
 }
