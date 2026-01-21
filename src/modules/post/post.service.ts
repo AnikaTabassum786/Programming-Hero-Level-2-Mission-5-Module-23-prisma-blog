@@ -225,9 +225,39 @@ const getMyPost=async(authorId:string)=>{
     }
 }
 
+// user- sudu nijer post update korte parbe. isFeatured update korte parbe na
+// admin- sobar post update korte parbe
+
+
+const updatePost=async(postId:string,data:Partial<Post>,authorId:string)=>{
+//  console.log(postId,data,authorId)
+
+const postData = await prisma.post.findUniqueOrThrow({
+    where:{
+        id:postId
+    },
+    select:{
+        id:true,
+        authorId:true
+    }
+})
+
+const result = await prisma.post.update({
+    where:{
+        id:postId // it same if use postData.id
+    },
+    data
+})
+
+// console.log(postData)
+// console.log(postData.id,postId)
+return result
+}
+
 export const postService = {
     createPost,
     getAllPost,
     getPostById,
-    getMyPost
+    getMyPost,
+    updatePost
 }
