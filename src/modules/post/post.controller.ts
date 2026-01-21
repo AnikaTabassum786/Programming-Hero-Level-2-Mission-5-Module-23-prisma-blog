@@ -3,6 +3,7 @@ import { postService } from "./post.service"
 import { PostStatus } from "../../../generated/prisma/enums";
 import paginationSortingHelper from "../../helpers/Pagination&SortingHelpers";
 import { prisma } from "../../lib/prisma";
+import { UserRole } from "../../middleware/auth";
 
 
 
@@ -111,11 +112,14 @@ const updatePost=async(req:Request,res:Response)=>{
     throw new Error("You are unauthorized")
   }
 
-  const result = await postService.updatePost(postId as string,req.body, user.id)
+  const isAdmin = user.role === UserRole.ADMIN
+ 
+  console.log(user)
+  const result = await postService.updatePost(postId as string,req.body, user.id, isAdmin)
   res.status(201).json(result)
   }
   catch (error) {
-        const errorMessage = (error instanceof Error)? error.message : "Comment Updated failed"
+        const errorMessage = (error instanceof Error)? error.message : "Post Updated failed"
         res.status(400).json({
             error: errorMessage,
             details: error
