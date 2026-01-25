@@ -6,6 +6,7 @@ import cors from 'cors'
 import { postRouter } from './modules/post/post.router';
 import { commentRouter } from './modules/comment/comment.router';
 import errorHandler from './middleware/globalErrorHandling';
+import { notFound } from './middleware/notFound';
 
 // import { auth } from './lib/auth';
 
@@ -28,6 +29,7 @@ app.get('/', (req,res)=>{
     res.send("Hello world")
 })
 
+app.use(notFound)
 app.use(errorHandler)
 
 export default app;

@@ -7,27 +7,92 @@ function errorHandler(err: any, req: Request, res: Response, next: NextFunction)
   let errorMessage = "Internal Server Error";
   let errorDetails = err
 
+  // if (err instanceof Prisma.PrismaClientValidationError) {
+  //   statusCode = 400;
+  //   errorMessage = "Your Provided field type or missing fields!"
+  // }
+
+  // else if (err instanceof Prisma.PrismaClientKnownRequestError) {
+  //   if (err.code === "P2025") {
+  //     statusCode = 400;
+  //     errorMessage = "An operation failed because it depends on one or more records that were required but not found"
+  //   }
+
+  //   else if (err.code === "P2002") {
+  //     statusCode = 400;
+  //     errorMessage = "Duplicate Key Error"
+  //   }
+
+  //   else if (err.code === "P2003") {
+  //     statusCode = 400;
+  //     errorMessage = "Foreign key constraint failed on the field"
+  //   }
+
+  //   else if (err instanceof Prisma.PrismaClientUnknownRequestError) {
+  //     statusCode = 500;
+  //     errorMessage = "Error occurred during query execution"
+  //   }
+
+  //   else if (err instanceof Prisma.PrismaClientRustPanicError) {
+  //     statusCode = 500;
+  //     errorMessage = "Internal Error"
+  //   }
+
+  //   else if (err instanceof Prisma.PrismaClientUnknownRequestError) {
+  //     if (err.errorCode === "P1000") {
+  //       statusCode = 401;
+  //       errorMessage = "Authentication failed.Please check your credentials"
+  //     }
+  //     else if (err.errorCode === "P1001") {
+  //       statusCode = 401;
+  //       errorMessage = "Can't reach database server"
+  //     }
+  //   }
+  // }
+
+
   if (err instanceof Prisma.PrismaClientValidationError) {
     statusCode = 400;
-    errorMessage = "Your Provided field type or missing fields!"
+    errorMessage = "You provide incorrect field type or missing fields!";
   }
 
   else if (err instanceof Prisma.PrismaClientKnownRequestError) {
     if (err.code === "P2025") {
       statusCode = 400;
-      errorMessage = "An operation failed because it depends on one or more records that were required but not found"
+      errorMessage = "An operation failed because it depends on one or more records that were required but not found."
     }
-
     else if (err.code === "P2002") {
       statusCode = 400;
-      errorMessage = "Duplicate Key Error"
+      errorMessage = "Duplicate key error"
     }
-
     else if (err.code === "P2003") {
       statusCode = 400;
-      errorMessage = "Foreign key constraint failed on the field"
+      errorMessage = "Foreign key constraint failed"
     }
   }
+
+  else if (err instanceof Prisma.PrismaClientUnknownRequestError) {
+    statusCode = 500;
+    errorMessage = "Error occurred during query execution";
+  }
+
+  else if (err instanceof Prisma.PrismaClientRustPanicError) {
+    statusCode = 500;
+    errorMessage = "Prisma engine panic";
+  }
+
+  else if (err instanceof Prisma.PrismaClientInitializationError) {
+    if (err.errorCode === "P1000") {
+      statusCode = 401;
+      errorMessage = "Authentication failed. Please check your credentials!"
+    }
+    else if (err.errorCode === "P1001") {
+      statusCode = 400;
+      errorMessage = "Can't reach database server"
+    }
+  }
+
+
 
   res.status(statusCode)
   res.json({
@@ -38,3 +103,4 @@ function errorHandler(err: any, req: Request, res: Response, next: NextFunction)
 
 
 export default errorHandler
+
