@@ -7,7 +7,6 @@ import { UserRole } from "../../middleware/auth";
 
 
 
-
 const createPost = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const user = req.user;
