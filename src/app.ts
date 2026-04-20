@@ -7,6 +7,7 @@ import { postRouter } from './modules/post/post.router';
 import { commentRouter } from './modules/comment/comment.router';
 import errorHandler from './middleware/globalErrorHandling';
 import { notFound } from './middleware/notFound';
+import { mailRouter } from './modules/mail/mail.router';
 
 // import { auth } from './lib/auth';
 
@@ -24,6 +25,7 @@ app.use(express.json());
 
 app.use('/posts', postRouter)
 app.use('/comments', commentRouter)
+app.use('/mail', mailRouter)
 
 app.get('/', (req,res)=>{
     res.send("Hello world")

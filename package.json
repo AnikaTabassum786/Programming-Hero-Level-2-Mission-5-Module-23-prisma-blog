@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx tsx watch src/server.ts",
-    "seed:admin":"npx tsx  src/scripts/seedAdmin.ts"
+    "seed:admin": "npx tsx  src/scripts/seedAdmin.ts"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +30,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "nodemailer": "^7.0.12",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "resend": "^6.12.0"
   }
 }
